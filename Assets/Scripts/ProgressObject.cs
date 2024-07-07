@@ -9,6 +9,11 @@ public class ProgressObject : InteractableObject
 	/// Duration of the progress
 	/// </summary>
 	[SerializeField] private float m_Duration;
+
+	/// <summary>
+	/// The progress bar that displays the current progress
+	/// </summary>
+	[SerializeField] private ProgressBar m_ProgressBar;
 	
 	/// <summary>
 	/// Current timer
@@ -20,27 +25,38 @@ public class ProgressObject : InteractableObject
 	/// </summary>
 	private bool m_IsProgressFinished;
 
-	public override bool CanInteractWith(PlayerInteraction playerInteraction)
+    /// <summary>
+    /// Returns the progress as a number in [0, 1] interval.
+    /// </summary>
+    public float GetProgress()
+    {
+        return Mathf.Clamp01(m_Timer / m_Duration);
+    }
+
+    public override bool CanInteractWith(PlayerInteraction playerInteraction)
 	{
 		// We no longer want to be able to interact with this if the progress is finished
 		return !m_IsProgressFinished;
 	}
 
-	/// <summary>
-	/// Returns the progress as a number in [0, 1] interval.
-	/// </summary>
-	public float GetProgress() 
-	{
-		return Mathf.Clamp01(m_Timer / m_Duration);
-	}
-	
-	void Update() 
+    public override void StartInteract(PlayerInteraction playerInteraction)
+    {
+        base.StartInteract(playerInteraction);
+
+		m_ProgressBar.gameObject.SetActive(true);
+		m_ProgressBar.SetProgress(GetProgress());
+    }
+
+    void Update() 
 	{
 		// If this object is currently being interacted with and the progress isn't yet finished
 		if (IsInteracting() && !m_IsProgressFinished) 
 		{
-			// Count the time
+			// Count the time, updating the progress
 			m_Timer += Time.deltaTime;
+
+			// Shows the progress on the bar
+			m_ProgressBar.SetProgress(GetProgress());
 			
 			Debug.Log($"{name} progress updated: {GetProgress()}");
 			
@@ -49,9 +65,12 @@ public class ProgressObject : InteractableObject
 			{
 				// Mark progress as finished
 				m_IsProgressFinished = true;
-				
-				// Deselect the item, it's no longer interactible
-				Deselect();
+
+                // Deactivate the progress bar
+                m_ProgressBar.gameObject.SetActive(false);
+
+                // Deselect the item, it's no longer interactible
+                Deselect();
 				
 				Debug.Log($"{name} progress finished");
 			}
