@@ -8,6 +8,14 @@ public class InteractableObject : MonoBehaviour
 	private PlayerInteraction m_PlayerInteraction;
 	
 	/// <summary>
+	/// Whether this object is currently being interacted with
+	/// </summary>
+	public bool IsInteracting() 
+	{
+		return m_PlayerInteraction != null;
+	}
+	
+	/// <summary>
 	/// Selects the object. Most likely, it's going to enable a highlight on it.
 	/// </summary>
 	public void Select()
