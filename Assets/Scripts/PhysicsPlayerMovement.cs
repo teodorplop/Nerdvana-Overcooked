@@ -55,8 +55,12 @@ public class PhysicsPlayerMovement : MonoBehaviour
             transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(m_Movement), m_RotationSpeed * Time.deltaTime);
     }
 
-    private void FixedUpdate()
+    /// <summary>
+    /// Method called at fixed time intervals, used for physics interactions
+    /// </summary>
+    void FixedUpdate()
     {
+        // Apply force on fixed update
         m_Rigidbody.MovePosition(m_Rigidbody.position + m_Movement * Time.fixedDeltaTime * m_MovementSpeed);
     }
 }
